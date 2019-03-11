@@ -32,6 +32,15 @@ formatters:
         datefmt: "%Y-%m-%d %H:%M:%S.%3n"
     ft2:
         format: "%(message)s"
+        type: "plain"
+    ft3:
+        datefmt: "%Y-%m-%d %H:%M:%S.%3n"
+        type: "json"
+        fields:
+            datetime: "%(asctime)s"
+            levelname: "%(levelname)s"
+            where: "%(filename)s:%(lineno)d"
+            ctxid: "%(ctxid)s"
 filters:
     f1:
         name: a.b
