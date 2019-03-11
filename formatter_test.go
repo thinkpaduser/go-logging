@@ -93,3 +93,34 @@ func TestFormat_TXID(t *testing.T) {
 	require.Equal(t,
 		WithLineFeed(expectedStr), formatter.Format(testRecord))
 }
+
+func TestFormat_JSON(t *testing.T) {
+	fields := map[string]string{
+		"levelname": "%(levelname)s",
+		"where": "%(filename)s:%(lineno)d",
+		"ctxid": "%(ctxid)s",
+		"message": "%(message)s",
+	}
+	formatter := NewJSONFormatter(fields, "", false)
+	formatted := formatter.Format(testRecord)
+	expectedLog := `{"ctxid":"123","levelname":"INFO","message":"message","where":"filename:111"}`
+	require.Equal(t, expectedLog, formatted)
+}
+
+func TestFormat_JSONPretty(t *testing.T) {
+	fields := map[string]string{
+		"levelname": "%(levelname)s",
+		"where": "%(filename)s:%(lineno)d",
+		"ctxid": "%(ctxid)s",
+		"message": "%(message)s",
+	}
+	formatter := NewJSONFormatter(fields, "", true)
+	formatted := formatter.Format(testRecord)
+	expectedLog := `{
+  "ctxid": "123",
+  "levelname": "INFO",
+  "message": "message",
+  "where": "filename:111"
+}`
+	require.Equal(t, expectedLog, formatted)
+}

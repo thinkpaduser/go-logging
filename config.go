@@ -117,6 +117,9 @@ type ConfFilter struct {
 type ConfFormatter struct {
 	Format     *string `json:"format" yaml:"format"`
 	DateFormat *string `json:"datefmt" yaml:"datefmt"`
+	Type       *string `json:"type" yaml:"type"`
+	Fields     map[string]string  `yaml:"fields"`
+	Pretty     *bool `yaml:"pretty"`
 }
 
 // A map represents configuration of various key and variable length.
@@ -445,7 +448,22 @@ func DictConfig(conf *Conf) error {
 		} else {
 			dateFormat = defaultDateFormat
 		}
-		env.formatters[name] = NewStandardFormatter(format, dateFormat)
+		if conf.Type != nil {
+			if *conf.Type == "json" {
+				JSONFormat := conf.Fields
+				PrettyJSON := false
+				if conf.Pretty != nil {
+					PrettyJSON = *conf.Pretty
+				}
+				env.formatters[name] = NewJSONFormatter(JSONFormat, dateFormat, PrettyJSON)
+			} else {
+				// default formatter
+				env.formatters[name] = NewStandardFormatter(format, dateFormat)
+			}
+		} else {
+			// default formatter
+			env.formatters[name] = NewStandardFormatter(format, dateFormat)
+		}
 	}
 	// initialize all handlers as specified
 	for name, m := range conf.Handlers {
